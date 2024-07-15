@@ -3,12 +3,17 @@ package model.entities;
 import java.time.Duration;
 import java.time.LocalDate;
 
+import model.exceptions.DomainException;
+
 public class Reservation {
 	Integer roomNumber;
 	LocalDate checkin;
 	LocalDate checkout;
 
 	public Reservation(Integer roomNumber, LocalDate checkin, LocalDate checkout) {
+		if (checkin.isAfter(checkout)) {
+			throw new DomainException("Error in reservation: Check-out date must be after check-in date!");
+		}
 		this.roomNumber = roomNumber;
 		this.checkin = checkin;
 		this.checkout = checkout;
@@ -35,16 +40,15 @@ public class Reservation {
 		return (int) Duration.between(checkin.atStartOfDay(), checkout.atStartOfDay()).toDays();
 	}
 
-	public String UpdateDates(LocalDate checkin, LocalDate checkout) {
+	public void UpdateDates(LocalDate checkin, LocalDate checkout) {
 		if (checkin.isBefore(LocalDate.now()) || checkout.isBefore(LocalDate.now())) {
-			return "Reservation dates for updates must be for future dates!";
+			throw new DomainException("Reservation dates for updates must be for future dates!");
 		}
 		else if (checkin.isAfter(checkout)) {
-			return "Error in reservation: Check-out date must be after check-in date!";
+			throw new DomainException("Error in reservation: Check-out date must be after check-in date!");
 		}
 		this.checkin = checkin;
 		this.checkout = checkout;
-		return null;
 	}
 	
 	@Override
