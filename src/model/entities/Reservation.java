@@ -8,19 +8,6 @@ public class Reservation {
 	LocalDate checkin;
 	LocalDate checkout;
 
-	public Integer duration() {
-		return (int) Duration.between(checkin.atStartOfDay(), checkout.atStartOfDay()).toDays();
-	}
-
-	public void UpdateDates(LocalDate checkin, LocalDate checkout) {
-		if (checkin.isAfter(this.checkin)) {
-			if (checkout.isAfter(checkin)) {
-				this.checkin = checkin;
-				this.checkout = checkout;
-			}
-		}
-	}
-
 	public Reservation(Integer roomNumber, LocalDate checkin, LocalDate checkout) {
 		this.roomNumber = roomNumber;
 		this.checkin = checkin;
@@ -44,6 +31,22 @@ public class Reservation {
 		return checkout;
 	}
 
+	public Integer duration() {
+		return (int) Duration.between(checkin.atStartOfDay(), checkout.atStartOfDay()).toDays();
+	}
+
+	public String UpdateDates(LocalDate checkin, LocalDate checkout) {
+		if (checkin.isBefore(LocalDate.now()) || checkout.isBefore(LocalDate.now())) {
+			return "Reservation dates for updates must be for future dates!";
+		}
+		else if (checkin.isAfter(checkout)) {
+			return "Error in reservation: Check-out date must be after check-in date!";
+		}
+		this.checkin = checkin;
+		this.checkout = checkout;
+		return null;
+	}
+	
 	@Override
 	public String toString() {
 		StringBuilder arg = new StringBuilder();
